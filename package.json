@@ -1,0 +1,27 @@
+{
+  "name": "hiddengmails",
+  "version": "1.0.0",
+  "description": "Hidden Gmails Webpage",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Vernon Lim (cls#2300)",
+  "license": "ISC",
+  "dependencies": {
+    "@handlebars/allow-prototype-access": "^1.0.5",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-handlebars": "^6.0.6",
+    "express-session": "^1.17.3",
+    "express-validator": "^6.14.1",
+    "handlebars": "^4.7.7",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.20.0",
+    "socket.io": "^4.5.1",
+    "stripe": "^9.5.0",
+    "uuid": "^8.3.2"
+  }
+}

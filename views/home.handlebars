@@ -1,0 +1,119 @@
+<section id="featuresection">
+        <div class="container" id="jumbo">
+            <div class="row">
+                <div class="col-6">
+                    <div class="pt-4 pl-3">
+                        <h1 class="mb-1 pt-5 font-weight-bold jumbotitle">One product for all your needs.</h1>
+                        <h5 class="mb-3 jumbotitle">Never solve another captcha.</h5>
+                    </div>
+                </div>
+                <div class="col-6 center">
+                    <img src="img/hiddengmails.jpg" class="center heroAnimation" height="82%" width="82%">
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="product">
+        <div class="container text-center">
+            <h2 style="color: rgba(255, 255, 255, .75);font-weight: 700;">Browse our solutions</h2>
+        </div>
+        <div class="container pt-3">
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-6 center">
+                    <div class="card center" style="width: 20rem;background-color: rgba(0,0,0,0);">
+                        <img class="card-img-top center" src="img/hiddengmails.jpg" alt="Card image cap">
+                        <div class="card-body" style="background-color: rgba(0,0,0,0);">
+                        <h5 class="card-title text-center font-weight-bold" style="color: rgba(255, 255, 255, .75);font-size: 1.8rem;">One Click with ISP</h5>
+                        <h6 class="card-title text-center font-weight-bold" style="color: rgba(255, 255, 255, .75);font-size:1.3rem;">$15 per email</h6>
+                        <p class="card-text"><ul>
+                            <li>Warmed extensively to a One Click Standard</li>
+                            <li>Comes with Loop ISPS</li>
+                            <li>0.9 V3 Score</li>
+                        </ul></p>
+                        {{#if stock}}
+                        <form method="POST" action="/payment">
+                        <div class="input-group inline-group center">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary btn-minus" type="button">
+                                <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input class="form-control quantity" min="1" name="quantity" value="1" type="number" max={{{stock}}}>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary btn-plus" type="button">
+                                <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                            </div>
+                            <input href="#" type="submit" value="Buy Now" id="buynowbutton"class="btn btn-primary mt-3">
+                        </form>
+                        {{else}}
+                        <button href="#" id="buynowbutton"class="btn btn-primary mt-3" disabled>Out of Stock</button>
+                        {{/if}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3"></div>
+            </div>
+        </div>
+    </section>
+    <section class="jumbotitle">
+        <div class="container text-center mt-5">
+            <h2 style="color: rgba(255, 255, 255, .75);font-weight: 700;">FAQ</h2>
+        </div>
+        <div class="container mt-5 pt-2">
+        <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4">
+            <h6 class="mb-3 text-primary">What's the point of a gmail?</h6>
+            <p>
+                The point of a gmail is to minimize captchas and increase the speed of your checkout flow, manually or with a sneaker bot.
+            </p>
+        </div>
+    
+        <div class="col-md-6 col-lg-4 mb-4">
+            <h6 class="mb-3 text-primary">When will you restock?
+            </h6>
+            <p>We restock randomly throughout the month, be sure to join our Discord for updates.
+            </p>
+        </div>
+    
+        <div class="col-md-6 col-lg-4 mb-4">
+            <h6 class="mb-3 text-primary">Why do I need a proxy?
+            </h6>
+            <p>All of our gmails except for unwarmed come with the proxy they were harvested on, this maintains the trust factor and shortening your cost to run.
+            </p>
+        </div>
+    
+        <div class="col-md-6 col-lg-4 mb-4">
+            <h6 class="mb-3 text-primary">What do I do after my proxy expires?
+            </h6>
+            <p>When your proxy expires, you can switch to either your local IP or a new proxy. One IP change within a few days will not effect the trust factor / oneclick status. As long as you keep on farming once the proxy expires.
+            </p>
+        </div>
+    
+        <div class="col-md-6 col-lg-4 mb-4">
+            <h6 class="mb-3 text-primary">How long will my oneclicks last?
+            </h6>
+            <p><strong><u>Unfortunately no</u>.</strong>Your oneclick can last however long you want it to. If you farm often and don't switch the proxy often, it can last for months, or even years. We will farm the one clicks up until the date the proxy expires. If you want to farm your gmails yourself and not have us farm them on the back end, please open up a ticket.</p>
+        </div>
+    
+        <div class="col-md-6 col-lg-4 mb-4">
+            <h6 class="mb-3 text-primary">How should I farm my gmails?</h6>
+            <p>
+                We use AYCD to farm and test, Kylin OC is also a really good farming tool. Use any other farmers at your own risk
+            </p>
+        </div>
+        </div>
+        </div>
+    </section>
+
+<script>
+$('.btn-plus, .btn-minus').on('click', function(e) {
+    const isNegative = $(e.target).closest('.btn-minus').is('.btn-minus');
+    const input = $(e.target).closest('.input-group').find('input');
+    if (input.is('input')) {
+        input[0][isNegative ? 'stepDown' : 'stepUp']()
+    }
+})
+</script>

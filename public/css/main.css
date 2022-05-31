@@ -1,0 +1,94 @@
+@import url(https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+@import url(http://fonts.googleapis.com/css?family=Calibri:400,300,700);
+
+
+body {
+    font-family: sans-serif !important;
+    background-color: #1b1a1a !important;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+header {
+    background-color: #000000;
+}
+
+#jumbo {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.navbar {
+    font-family: Helvetica;
+    font-size: .85rem;
+    background-color: rgba(0, 0, 0, 65%);
+}
+
+
+.jumbotitle {
+    font-family: sans-serif; 
+    color: rgba(255, 255, 255, .75);
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.heroAnimation {
+    transform: rotate(-7deg);
+    margin-top: 30px;
+    animation-name: bounce-2; 
+    animation-timing-function: ease;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+}
+@keyframes bounce-2 {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-30px); }
+    100% { transform: translateY(0); }
+}
+
+.card {
+    border: 2px !important;
+    color: rgba(255, 255, 255, .75);
+}
+
+#buynowbutton {
+    width: 100%;
+    background-color: rgba(6,191,248,255);
+    color: rgba(245, 245, 245, 0.897);
+}
+
+#product {
+    background-color: rgba(32, 32, 32, 0);
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+#partnersection, #featuresection {
+    background-color: #000000;
+}
+
+h2 {
+    color: rgba(255, 255, 255, .75);
+    font-weight: 700;
+}
+
+.inline-group {
+    max-width: 9rem;
+    padding: .5rem;
+  }
+  
+  .inline-group .form-control {
+    text-align: right;
+  }
+  
+  .form-control[type="number"]::-webkit-inner-spin-button,
+  .form-control[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
