@@ -4,8 +4,12 @@ const path = require('path');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser'); //to retrieve req.body
 const Sequelize = require('sequelize');
-const Stripe = require('stripe')
-const stripe = Stripe(process.env.STRIPE_PRIVATE_KEY)
+// const Stripe = require('stripe')
+// const stripe = Stripe(process.env.STRIPE_PRIVATE_KEY)
+const stripe = require('stripe')("sk_test_51IV9PXGpiEp0kvwc9RVQuYfUaDUyMm5f3N3wweSAXi6gqZmdYRkTeVnByI3yxwLIBUQOgrS5reDoC8naFtY7uuFK00OTE594LZ");
+
+
+const webhookSecret = "whsec_fdad0fbd6a224d0010b0645e3f572ff6aaa2a624d67bff4b5036fa1f6c1dce58";
 
 const Handlebars = require('handlebars');
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
@@ -18,6 +22,35 @@ app.use(express.static('public'))
 
 //MiddleWares
 // Body parser middleware to parse HTTP body in order to read HTTP data
+app.use((req, res, next) => {
+    if (req.originalUrl === '/webhook') {
+      next();
+    } else {
+      express.json()(req, res, next);
+    }
+});
+
+// Stripe requires the raw body to construct the event
+app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
+    console.log(req.body)
+    const sig = req.headers['stripe-signature'];
+
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    } catch (err) {
+        // On error, log and return the error message
+        console.log(`❌ Error message: ${err.message}`);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Successfully constructed event
+    console.log('✅ Success:', event.id);
+
+    // Return a response to acknowledge receipt of the event
+    res.json({received: true});
+});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
@@ -25,11 +58,9 @@ app.use(bodyParser.urlencoded({
 
 //Routes
 const mainRoute = require('./routes/main')
-const webhookRoute = require('./routes/webhook')
 
 //Routes 2.0
 app.use("/", mainRoute)
-app.use("/", webhookRoute)
 
 // HandleBar middlewares
 app.engine('handlebars', exphbs.engine({

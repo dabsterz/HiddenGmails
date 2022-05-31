@@ -2,5 +2,5 @@ module.exports = {
     host: 'localhost',
     database: 'hiddengmails',
     username: 'root',
-    password: 'password'
+    password: 'Elljaykei@2003'
 }
