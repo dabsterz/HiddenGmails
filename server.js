@@ -4,12 +4,19 @@ const path = require('path');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser'); //to retrieve req.body
 const Sequelize = require('sequelize');
-// const Stripe = require('stripe')
-// const stripe = Stripe(process.env.STRIPE_PRIVATE_KEY)
+const passport = require('passport')
+const DiscordStrategy = require('./config/discordstrategy')
 const stripe = require('stripe')("sk_test_51IV9PXGpiEp0kvwc9RVQuYfUaDUyMm5f3N3wweSAXi6gqZmdYRkTeVnByI3yxwLIBUQOgrS5reDoC8naFtY7uuFK00OTE594LZ");
+require('dotenv').config();
 
+const { Client, Intents, MessageEmbed } = require('discord.js');
 
-const webhookSecret = "whsec_fdad0fbd6a224d0010b0645e3f572ff6aaa2a624d67bff4b5036fa1f6c1dce58";
+//Models
+const Main = require('./models/main');
+const Orders = require('./models/orders')
+const Awaiting_payment = require('./models/temp')
+const SoldGmails = require('./models/soldgmails')
+
 
 const Handlebars = require('handlebars');
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
@@ -22,45 +29,37 @@ app.use(express.static('public'))
 
 //MiddleWares
 // Body parser middleware to parse HTTP body in order to read HTTP data
-app.use((req, res, next) => {
-    if (req.originalUrl === '/webhook') {
-      next();
-    } else {
-      express.json()(req, res, next);
+app.use(bodyParser.json({
+    verify: (req, res, buf) => {
+      req.rawBody = buf
     }
-});
+  }))
 
-// Stripe requires the raw body to construct the event
-app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
-    console.log(req.body)
-    const sig = req.headers['stripe-signature'];
 
-    let event;
-
-    try {
-        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-    } catch (err) {
-        // On error, log and return the error message
-        console.log(`❌ Error message: ${err.message}`);
-        return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
-
-    // Successfully constructed event
-    console.log('✅ Success:', event.id);
-
-    // Return a response to acknowledge receipt of the event
-    res.json({received: true});
-});
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 
+app.use(session({
+    secret: 'niu bi ji qi ren',
+    cookie: {
+        maxAge: 60000 * 60 * 24
+    },
+    saveUninitialized: false
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 //Routes
 const mainRoute = require('./routes/main')
+const authRoute = require('./routes/auth')
+const adminRoute = require('./routes/admin')
 
 //Routes 2.0
 app.use("/", mainRoute)
+app.use("/auth",authRoute)
+app.use("/admin",adminRoute)
 
 // HandleBar middlewares
 app.engine('handlebars', exphbs.engine({
@@ -207,3 +206,45 @@ io.on('connection', function(client) {
 http.listen(app.get('port'), function() {
     console.log(`Server started on port ${app.get('port')}`)
 });
+
+//discord login
+const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+client.once('ready', () => {
+	console.log('Ready!');
+});
+
+client.on('interactionCreate', async interaction => {
+    console.log("ne")
+	if (!interaction.isCommand()) return;
+
+	const { commandName } = interaction;
+
+	if (commandName === 'stock') {
+        stockcount = await Main.findAndCountAll({raw:true})
+        awaitingcount = await Awaiting_payment.findAndCountAll({raw:true})
+        const newEmbed = new MessageEmbed()
+            .setColor('#0099ff')
+            .setTitle('Stock Count')
+            .addFields(
+                { name: 'Gmails Stock', value: stockcount.count.toString(),inline: true },
+		        { name: 'Awaiting Payment', value: awaitingcount.count.toString(),inline: true },
+            )
+		await interaction.reply({embeds: [newEmbed]});
+	} else if (commandName === 'orderinfo') {
+        const ordernum = interaction.options.getString('input')
+        boughtgmails = await SoldGmails.findAll({where:{orderno:ordernum}})
+        gmailstring = ""
+        for(i in boughtgmails) {
+            console.log(boughtgmails)
+            row = boughtgmails[i].dataValues
+            gmailstring += row.email + ":::" + row.password + ":::" + row.ip + ":::" + row.authuser + ":::" + row.authpass + "\t" + row.proxyexpiry + "\n" 
+        }
+        if (gmailstring == "") {
+            await interaction.reply("Order not found")
+        } else {
+            await interaction.reply("```"+`Order number: #${ordernum}\nCustomer: ${boughtgmails[0].dataValues.customer}\nDiscord: ${boughtgmails[0].dataValues.discord}\nQty: ${boughtgmails.length}\nDate of purchase: ${boughtgmails[0].dataValues.datesold}\n\n`+gmailstring+"```");
+        }
+	} 
+});
+
+client.login(process.env.DISCORD_TOKEN)

@@ -32,6 +32,7 @@
                             <li>0.9 V3 Score</li>
                         </ul></p>
                         {{#if stock}}
+                        {{#if user}}
                         <form method="POST" action="/payment">
                         <div class="input-group inline-group center">
                             <div class="input-group-prepend">
@@ -48,6 +49,24 @@
                             </div>
                             <input href="#" type="submit" value="Buy Now" id="buynowbutton"class="btn btn-primary mt-3">
                         </form>
+                        {{else}}
+                        <form method="POST" onSubmit="return confirm('Please Log in First!');" action="/payment">
+                        <div class="input-group inline-group center">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary btn-minus" type="button">
+                                <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input class="form-control quantity" min="1" name="quantity" value="1" type="number" max={{{stock}}}>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary btn-plus" type="button">
+                                <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                            </div>
+                            <input href="#" type="submit" value="Buy Now" id="buynowbutton"class="btn btn-primary mt-3">
+                        </form>
+                        {{/if}}
                         {{else}}
                         <button href="#" id="buynowbutton"class="btn btn-primary mt-3" disabled>Out of Stock</button>
                         {{/if}}
@@ -116,4 +135,7 @@ $('.btn-plus, .btn-minus').on('click', function(e) {
         input[0][isNegative ? 'stepDown' : 'stepUp']()
     }
 })
+$(document.ready(function(){
+
+}))
 </script>
