@@ -36,6 +36,28 @@ var isLoggedin = async (req,res,next) => {
     }
 }
 
+var isAdmin = (req) => {
+    if (req.user) {
+        if (req.user.discordid == '748143796814086265') {
+            return true
+        } else {
+            return false
+        }
+    } else {
+        return false
+    }
+    
+}
+
+var isAdminmiddleware = async (req,res,next) => {
+    console.log(req.user)
+    if (req.user.discordid == '748143796814086265') {
+        next()
+    } else {
+        res.status(403)
+    }
+}
+
 var createOrder = async (session, lineitem) => {
     console.log(session.metadata)
     console.log(session.customer_details.email)
@@ -182,7 +204,7 @@ router.get('/',  (req,res) => {
     Main.findAndCountAll({raw:true}).then((gmails) => {
         console.log(gmails.count)
         if (gmails.count > 0) {
-            res.render("home",{layout:"main", stock: gmails.count, user: req.user})
+            res.render("home",{layout:"main", stock: gmails.count, user: req.user, admin: isAdmin(req)})
         } else {
             res.render("home",{layout:"main", stock: false})
         }

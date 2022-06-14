@@ -59,7 +59,7 @@ const adminRoute = require('./routes/admin')
 //Routes 2.0
 app.use("/", mainRoute)
 app.use("/auth",authRoute)
-app.use("/admin",adminRoute)
+app.use("/",adminRoute)
 
 // HandleBar middlewares
 app.engine('handlebars', exphbs.engine({
