@@ -1,8 +1,37 @@
 <section id="addcsv">
     <div class="container">
-    <form action="/action_page.php">
-    <input type="file" id="myFile" name="filename">
-    <input type="submit">
+    <form id="theform">
+    <input type="file" id="csvFile" name="filename">
+    <input type="submit" id="submitgmails">
     </form>
     </div>
 </section>
+<script>
+    $(document).ready(function() {
+    $("#submitgmails").click(function(e) {
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+
+    var form = $(this);
+    var actionUrl = '/gmailupload';
+    var formData = new FormData();
+    formData.append('filename', $('#csvFile')[0].files[0])
+    $.ajax({
+        type: "POST",
+        url: actionUrl,
+        data: formData, // serializes the form's elements.
+        processData: false,
+        contentType: false,
+        mimeType: "multipart/form-data",
+        success: function(data, textstatus, xhr) {
+            window.alert("Successfully Uploaded Gmails")
+            window.location.reload()
+        },
+        error: function (xhr, textstatus, error) {
+            console.log(error)
+        }
+    });
+    
+});
+})
+</script>

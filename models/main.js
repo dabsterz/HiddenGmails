@@ -23,7 +23,8 @@ const Gmails = db.define('gmails', {
         type: Sequelize.STRING,
     },
     dateadded: {
-        type: Sequelize.STRING,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
     },
 });
 
