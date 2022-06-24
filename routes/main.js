@@ -38,7 +38,7 @@ var isLoggedin = async (req,res,next) => {
 
 var isAdmin = (req) => {
     if (req.user) {
-        if (req.user.discordid == '748143796814086265') {
+        if (req.user.discordid == '748143796814086265' || req.user.discordid == '936329238993326090' || req.user.discordid == '475109099705729024') {
             return true
         } else {
             return false
@@ -74,15 +74,17 @@ var createOrder = async (session, lineitem) => {
         allocatedgmails = await Main.findAll({
             limit: lineitem.data[0].quantity,
         })
+        if (allocatedgmails.length != lineitem.data[0].quantity) {
+            throw 'Not enough gmails in database'
+        }
         for (let i in allocatedgmails) {
             console.log(allocatedgmails[i])
             await Awaiting_payment.create({
                 maintableid: allocatedgmails[i].dataValues.id,
                 email: allocatedgmails[i].dataValues.email,
                 password: allocatedgmails[i].dataValues.password,
-                ip: allocatedgmails[i].dataValues.ip,
-                authuser: allocatedgmails[i].dataValues.authuser,
-                authpass: allocatedgmails[i].dataValues.authpass,
+                recovery: allocatedgmails[i].dataValues.recovery,
+                proxy: allocatedgmails[i].dataValues.proxy,
                 proxyexpiry: allocatedgmails[i].dataValues.proxyexpiry,
                 dateadded: allocatedgmails[i].dataValues.dateadded,
                 orderno: ordernumber.dataValues.idorders,
@@ -140,9 +142,8 @@ var fulfillOrder = async (session) => {
             await SoldGmails.create({
                 email: row.email,
                 password: row.password,
-                ip: row.ip,
-                authuser: row.authuser,
-                authpass: row.authpass,
+                recovery: row.recovery,
+                proxy: row.proxy,
                 proxyexpiry: row.proxyexpiry,
                 dateadded: row.dateadded,
                 customer: ordernumber[0].dataValues.customer,
@@ -150,7 +151,7 @@ var fulfillOrder = async (session) => {
                 orderno: ordernumber[0].dataValues.idorders
             })
             await Awaiting_payment.destroy({where:{awaitingid:row.awaitingid}})
-            gmailstring += row.email + ":::" + row.password + ":::" + row.ip + ":::" + row.authuser + ":::" + row.authpass + "\n" 
+            gmailstring += row.email + ":::" + row.password + ":::" + row.recovery + ":::" + row.proxy + "\n" 
         }
         await transporter.sendMail({
             from: 'Loop Solutions <orders@manualloop.com>',
@@ -206,7 +207,7 @@ router.get('/',  (req,res) => {
         if (gmails.count > 0) {
             res.render("home",{layout:"main", stock: gmails.count, user: req.user, admin: isAdmin(req)})
         } else {
-            res.render("home",{layout:"main", stock: false})
+            res.render("home",{layout:"main", stock: false, user: req.user, admin: isAdmin(req)})
         }
     }).catch(err=> console.log(err))
 })

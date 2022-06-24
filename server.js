@@ -214,7 +214,6 @@ client.once('ready', () => {
 });
 
 client.on('interactionCreate', async interaction => {
-    console.log("ne")
 	if (!interaction.isCommand()) return;
 
 	const { commandName } = interaction;
@@ -237,7 +236,7 @@ client.on('interactionCreate', async interaction => {
         for(i in boughtgmails) {
             console.log(boughtgmails)
             row = boughtgmails[i].dataValues
-            gmailstring += row.email + ":::" + row.password + ":::" + row.ip + ":::" + row.authuser + ":::" + row.authpass + "\t" + row.proxyexpiry + "\n" 
+            gmailstring += row.email + ":::" + row.password + ":::" + row.recovery + ":::" + row.proxy + "\t" + row.proxyexpiry + "\n" 
         }
         if (gmailstring == "") {
             await interaction.reply("Order not found")

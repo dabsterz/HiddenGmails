@@ -32,7 +32,7 @@ var isAdmin = (req) => {
 var isAdminmiddleware = async (req,res,next) => {
     console.log(req.user)
     if (req.user) {
-        if (req.user.discordid == '748143796814086265') {
+        if (req.user.discordid == '748143796814086265' || req.user.discordid == '936329238993326090' || req.user.discordid == '475109099705729024') {
             next()
         } else {
             res.status(403).send("NEGAY")
@@ -62,10 +62,9 @@ router.post('/gmailupload', isAdminmiddleware, upload.single('filename'), (req,r
             await Main.create({
                 email: fileRows[x][0],
                 password: fileRows[x][1],
-                ip: fileRows[x][2],
-                authuser: fileRows[x][3],
-                authpass: fileRows[x][4],
-                proxyexpiry: fileRows[x][5]
+                recovery: fileRows[x][2],
+                proxy: fileRows[x][3],
+                proxyexpiry: fileRows[x][4]
             })
           }
           res.status(200).send("Success")

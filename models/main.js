@@ -10,13 +10,10 @@ const Gmails = db.define('gmails', {
     password: {
         type: Sequelize.STRING
     },
-    ip: {
+    recovery: {
         type: Sequelize.STRING,
     },
-    authuser: {
-        type: Sequelize.STRING,
-    },
-    authpass: {
+    proxy: {
         type: Sequelize.STRING,
     },
     proxyexpiry: {

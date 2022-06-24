@@ -18,13 +18,10 @@ const awaiting_payment = db.define('awaiting_payment', {
     password: {
         type: Sequelize.STRING
     },
-    ip: {
+    recovery: {
         type: Sequelize.STRING
     },
-    authuser: {
-        type: Sequelize.STRING
-    },
-    authpass: {
+    proxy: {
         type: Sequelize.STRING
     },
     proxyexpiry: {

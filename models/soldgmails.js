@@ -15,13 +15,10 @@ const SoldGmails = db.define('soldgmails', {
     password: {
         type: Sequelize.STRING
     },
-    ip: {
+    recovery: {
         type: Sequelize.STRING,
     },
-    authuser: {
-        type: Sequelize.STRING,
-    },
-    authpass: {
+    proxy: {
         type: Sequelize.STRING,
     },
     proxyexpiry: {
