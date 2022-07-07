@@ -43,7 +43,9 @@ var isAdminmiddleware = async (req,res,next) => {
 }
 
 router.get('/loopsolutionsgoat', isAdminmiddleware, (req,res) => {
-    res.render("admin", {layout: "main", user: req.user, admin: true})
+    Main.findAndCountAll({raw:true}).then((gmails) => {
+        res.render("admin", {layout: "main", user: req.user, admin: true, stock: gmails.count})
+    })
 })
 
 router.post('/gmailupload', isAdminmiddleware, upload.single('filename'), (req,res) => {
@@ -56,6 +58,7 @@ router.post('/gmailupload', isAdminmiddleware, upload.single('filename'), (req,r
     })
     .on("end", async function () {
       fs.unlinkSync(req.file.path);   // remove temp file
+      headers = fileRows.shift()
       try {
         for (x in fileRows) {
             console.log(fileRows[x])

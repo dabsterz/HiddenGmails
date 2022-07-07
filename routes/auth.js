@@ -14,4 +14,11 @@ router.get('/redirect', passport.authenticate('discord', {
     res.send(200);
 })
 
+router.get('/logout', function(req, res){
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect('/');
+      });
+  });
+
 module.exports = router;

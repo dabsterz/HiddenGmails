@@ -89,7 +89,7 @@ var createOrder = async (session, lineitem) => {
                 dateadded: allocatedgmails[i].dataValues.dateadded,
                 orderno: ordernumber.dataValues.idorders,
             });
-            // await Main.destroy({where: {id:allocatedgmails[i].dataValues.id}})
+            await Main.destroy({where: {id:allocatedgmails[i].dataValues.id}})
         }
         orderwebhook = new WebhookClient({ url: 'https://ptb.discord.com/api/webhooks/981590601894088704/NYXsv1ebehvn38VWG4l9CgLZGspfoC8bK0UbqifmxGOhehrIlKppijvob7R7TTRZilB7' });
         const newEmbed = new MessageEmbed()
@@ -151,7 +151,7 @@ var fulfillOrder = async (session) => {
                 orderno: ordernumber[0].dataValues.idorders
             })
             await Awaiting_payment.destroy({where:{awaitingid:row.awaitingid}})
-            gmailstring += row.email + ":::" + row.password + ":::" + row.recovery + ":::" + row.proxy + "\n" 
+            gmailstring += row.email + ":::" + row.password + ":::" + row.recovery + ":::" + row.proxy + "\t" + row.proxyexpiry + "\n" 
         }
         await transporter.sendMail({
             from: 'Loop Solutions <orders@manualloop.com>',
@@ -204,6 +204,9 @@ router.get('/',  (req,res) => {
     console.log("Requested for index")
     Main.findAndCountAll({raw:true}).then((gmails) => {
         console.log(gmails.count)
+        if (gmails.count > 20) {
+            gmails.count = 20
+        }
         if (gmails.count > 0) {
             res.render("home",{layout:"main", stock: gmails.count, user: req.user, admin: isAdmin(req)})
         } else {
@@ -216,6 +219,9 @@ router.post('/payment', isLoggedin, (req,res) => {
     console.log("Requested to pay")
     if (isNaN(req.body.quantity)) {
         return res.status(500).send("Error in Quantity")
+    }
+    if (req.body.quantity > 20) {
+        req.body.quantity = 20
     }
     Main.findAndCountAll({raw:true}).then(async (gmails) => {
         if (gmails.count < req.body.quantity) {
@@ -230,14 +236,14 @@ router.post('/payment', isLoggedin, (req,res) => {
                         quantity:req.body.quantity,
                         }],
                     metadata: req.user, 
+                    allow_promotion_codes: true,
                     payment_method_types: ['card'],
                     mode: 'payment',
-                    success_url:"http://localhost:3000/",
-                    cancel_url: "http://localhost:3000/"
+                    success_url:"http://49.245.56.87/success",
+                    cancel_url: "http://49.245.56.87/"
                 }, {
                     idempotencyKey: uuid.v4()
                 })
-                console.log(session.url)
                 res.redirect(session.url)
             } catch (err) {
                 console.log(err)
@@ -246,6 +252,10 @@ router.post('/payment', isLoggedin, (req,res) => {
         }
         
     })
+})
+
+router.get('/success', (req,res) => {
+    res.render('success',{layout:"successcancel", user: req.user, admin: isAdmin(req)})
 })
 
 // Stripe requires the raw body to construct the event
@@ -302,34 +312,5 @@ router.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
         }
       }
 });
-
-// router.post('/webhook', bodyParser.raw({type: 'application/json'}), (req, res)=>{
-//     const payload = JSON.stringify(req.body, null, 2);
-//     const sig = req.headers['stripe-signature'];
-//     console.log(payload)
-//     console.log(sig)
-  
-//     let event = {};
-    
-//     try {
-//       event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
-//     } catch (err) {
-//       console.log(`Webhook Error: ${err}`)
-//       return res.status(400).send(`Webhook Error: ${err.message}`);
-//     }
-  
-//     response.status(200);
-      // const authevent = req.body
-      // const sig = req.headers['stripe-signature']
-      // let event
-      // try {
-      //     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret)
-      // } catch (err) {
-      //     console.log(err)
-      //     return res.status(400).send(`Webhook Error: ${err.message}`)
-      // }
-      
-//       console.log(event)
-//   })
 
 module.exports = router;

@@ -16,7 +16,7 @@ passport.use(new DiscordStrategy({
     clientID: process.env.DISCORD_OAUTH_CLIENTID,
     clientSecret: process.env.DISCORD_OAUTH_CLIENTSECRET,
     callbackURL: process.env.DISCORD_CLIENTREDIRECT,
-    scope: ['identify', 'email', 'guilds', 'guilds.members.read']
+    scope: ['identify', 'email', 'guilds.members.read']
 }, async (accesstoken, refreshtoken, profile, done)=> {
     console.log(accesstoken)
     console.log(profile.username)
